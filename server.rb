@@ -1,19 +1,16 @@
 #server receive a file from client
 require 'socket'
+require 'timeout'
+
+CHUNK_SIZE = 4096 # bytes (4Kb)
 
 file = ARGV[0] # full path to file
 port = Integer(ARGV[1]) # socket's port
-
 server = TCPServer.open(port)
-
-loop do
-  Thread.start(server.accept) do |client|
-    #client.puts(Time.now.ctime)
-    data = client.read
-    destFile = File.open(file, 'wb')
-    destFile.print data
-    destFile.close
+client = server.accept
+File.open(file, 'ab') do |file|
+  while chunk = client.read(CHUNK_SIZE)
+    file.write(chunk)
   end
 end
-
 
