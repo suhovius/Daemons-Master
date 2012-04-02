@@ -23,8 +23,7 @@ TCPSocket.open(host, port) do |socket|
       current_chunk_number += 1
       if (start_chunk..end_chunk).include? current_chunk_number
         print "#{current_chunk_number} "
-        socket.puts(upload_session_id)
-        socket.write(chunk)
+        socket.write("#{upload_session_id}\n"+ chunk)
       end
     end
   end
