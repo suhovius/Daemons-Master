@@ -14,14 +14,22 @@ module UploadServer
     File.open(uploads_path_for(upload_session_id), 'ab') { |file| file.write(chunk) }
     log_string("Upload to #{uploads_path_for(upload_session_id)}")   
   end
-=end
+
   def receive_data(data)  
     @buf << data  
     while line = @buf.slice!(/(.+)\r?\n/)  
       send_data "You said: #{line}\n"  
     end
   end
+=end
 
+  def receive_data(data)  
+    @buf ||= BufferedTokenizer.new("\n")
+    @buf.extract(data).each do |line| 
+      send_data "You said: #{line}" 
+    end
+  end
+  
   def unbind
     log_string("Connection closed")
   end
